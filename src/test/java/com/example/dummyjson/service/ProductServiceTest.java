@@ -44,7 +44,6 @@ public class ProductServiceTest {
 
     @BeforeEach
     public void setUp() {
-        // Mockando o WebClient.Builder para garantir que ele não seja nulo
         when(webClientBuilder.build()).thenReturn(webClient);
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(any(URI.class))).thenReturn(requestHeadersSpec);

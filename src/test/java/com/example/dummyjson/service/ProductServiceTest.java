@@ -5,11 +5,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
@@ -21,17 +21,17 @@ import static org.mockito.ArgumentMatchers.any;
 
 import java.net.URI;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class ProductServiceTest {
 
-    @InjectMocks
+    @Autowired
     private ProductService productService;
+
+    @MockBean
+    private WebClient.Builder webClientBuilder;
 
     @Mock
     private WebClient webClient;
-
-    @Mock
-    private WebClient.Builder webClientBuilder;
 
     @Mock
     private RequestHeadersUriSpec requestHeadersUriSpec;
@@ -44,6 +44,7 @@ public class ProductServiceTest {
 
     @BeforeEach
     public void setUp() {
+        // Mockando o WebClient.Builder para garantir que ele não seja nulo
         when(webClientBuilder.build()).thenReturn(webClient);
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(any(URI.class))).thenReturn(requestHeadersSpec);

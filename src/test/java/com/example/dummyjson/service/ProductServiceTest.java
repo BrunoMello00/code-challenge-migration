@@ -1,28 +1,54 @@
 package com.example.dummyjson.service;
 
 import com.example.dummyjson.dto.Product;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.client.RestTemplate;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.net.URI;
+
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 
     @InjectMocks
     private ProductService productService;
 
     @Mock
-    private RestTemplate restTemplate;
+    private WebClient webClient;
+
+    @Mock
+    private WebClient.Builder webClientBuilder;
+
+    @Mock
+    private RequestHeadersUriSpec requestHeadersUriSpec;
+
+    @Mock
+    private RequestHeadersSpec requestHeadersSpec;
+
+    @Mock
+    private ResponseSpec responseSpec;
+
+    @BeforeEach
+    public void setUp() {
+        when(webClientBuilder.build()).thenReturn(webClient);
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri(any(URI.class))).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+    }
 
     @Test
     public void testGetAllProducts() {
@@ -35,11 +61,17 @@ public class ProductServiceTest {
         product2.setTitle("Product 2");
 
         Product[] products = {product1, product2};
-        when(restTemplate.getForObject("https://dummyjson.com/products", Product[].class)).thenReturn(products);
 
-        List<Product> result = productService.getAllProducts();
-        assertEquals(2, result.size());
-        assertEquals("Product 1", result.get(0).getTitle());
+        when(responseSpec.bodyToFlux(Product.class)).thenReturn(Flux.just(products));
+
+        Flux<Product> result = productService.getAllProducts();
+
+        result.collectList()
+            .doOnNext(productList -> {
+                assertEquals(2, productList.size());
+                assertEquals("Product 1", productList.get(0).getTitle());
+            })
+            .subscribe();
     }
 
     @Test
@@ -48,9 +80,11 @@ public class ProductServiceTest {
         product.setId(1L);
         product.setTitle("Product 1");
 
-        when(restTemplate.getForObject("https://dummyjson.com/products/1", Product.class)).thenReturn(product);
+        when(responseSpec.bodyToMono(Product.class)).thenReturn(Mono.just(product));
 
-        Product result = productService.getProductById(1L);
-        assertEquals("Product 1", result.getTitle());
+        Mono<Product> result = productService.getProductById(1L);
+
+        result.doOnNext(resultProduct -> assertEquals("Product 1", resultProduct.getTitle()))
+              .subscribe();
     }
 }

@@ -4,9 +4,10 @@ import com.example.dummyjson.dto.Product;
 import com.example.dummyjson.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/api/products")
@@ -16,12 +17,12 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public Flux<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable @NotNull Long id) {
+    public Mono<Product> getProductById(@PathVariable @NotNull Long id) {
         return productService.getProductById(id);
     }
 }

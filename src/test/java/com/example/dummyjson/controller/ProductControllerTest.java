@@ -2,20 +2,17 @@ package com.example.dummyjson.controller;
 
 import com.example.dummyjson.dto.Product;
 import com.example.dummyjson.service.ProductService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ProductControllerTest {
 
     @InjectMocks
@@ -23,6 +20,11 @@ public class ProductControllerTest {
 
     @Mock
     private ProductService productService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void testGetAllProducts() {
@@ -34,12 +36,14 @@ public class ProductControllerTest {
         product2.setId(2L);
         product2.setTitle("Product 2");
 
-        List<Product> products = Arrays.asList(product1, product2);
-        when(productService.getAllProducts()).thenReturn(products);
+        when(productService.getAllProducts()).thenReturn(Flux.just(product1, product2));
 
-        List<Product> result = productController.getAllProducts();
-        assertEquals(2, result.size());
-        assertEquals("Product 1", result.get(0).getTitle());
+        Flux<Product> result = productController.getAllProducts();
+
+        StepVerifier.create(result)
+                .expectNext(product1)
+                .expectNext(product2)
+                .verifyComplete();
     }
 
     @Test
@@ -48,9 +52,12 @@ public class ProductControllerTest {
         product.setId(1L);
         product.setTitle("Product 1");
 
-        when(productService.getProductById(1L)).thenReturn(product);
+        when(productService.getProductById(1L)).thenReturn(Mono.just(product));
 
-        Product result = productController.getProductById(1L);
-        assertEquals("Product 1", result.getTitle());
+        Mono<Product> result = productController.getProductById(1L);
+
+        StepVerifier.create(result)
+                .expectNext(product)
+                .verifyComplete();
     }
 }

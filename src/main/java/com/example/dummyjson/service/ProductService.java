@@ -3,28 +3,39 @@ package com.example.dummyjson.service;
 import com.example.dummyjson.dto.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.net.URI;
 
 @Service
 public class ProductService {
 
-    private final String BASE_URL = "https://dummyjson.com/products";
+    private String baseUrl = "https://dummyjson.com/products";
 
     @Autowired
-    private RestTemplate restTemplate;
+    private WebClient.Builder webClientBuilder;
 
-    public List<Product> getAllProducts() {
-        Product[] products = restTemplate.getForObject(BASE_URL, Product[].class);
-        return Arrays.asList(products);
+    public WebClient getWebClient() {
+        return webClientBuilder.build();
     }
 
-    public Product getProductById(Long id) {
-        String url = BASE_URL + "/" + id;
-        return restTemplate.getForObject(url, Product.class);
+    public Flux<Product> getAllProducts() {
+        URI uri = URI.create(baseUrl);
+        return getWebClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToFlux(Product.class);
+    }
+
+    public Mono<Product> getProductById(Long id) {
+        URI uri = URI.create(baseUrl + "/" + id);
+        return getWebClient()
+                .get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(Product.class);
     }
 }

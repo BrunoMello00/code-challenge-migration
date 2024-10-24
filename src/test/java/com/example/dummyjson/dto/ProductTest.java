@@ -1,31 +1,54 @@
 package com.example.dummyjson.dto;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import java.util.Set;
 
-@RunWith(MockitoJUnitRunner.class)
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ProductTest {
 
+    private final Validator validator;
+
+    public ProductTest() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
+
     @Test
-    public void testGetAndSetter(){
-        Long expectId = 1L;
+    public void testGetAndSetter() {
+        Long expectedId = 1L;
         String expectedTitle = "A dummy title";
         String expectedDescription = "A dummy description";
-        Double expectedPrice = new Double("2.1");
+        Double expectedPrice = 2.1;
 
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setTitle("A dummy title");
-        product1.setDescription("A dummy description");
-        product1.setPrice(new Double("2.1"));
+        Product product = new Product();
+        product.setId(expectedId);
+        product.setTitle(expectedTitle);
+        product.setDescription(expectedDescription);
+        product.setPrice(expectedPrice);
 
-        Assert.assertEquals(expectId, product1.getId());
-        Assert.assertEquals(expectedTitle, product1.getTitle());
-        Assert.assertEquals(expectedDescription, product1.getDescription());
-        Assert.assertEquals(expectedPrice, product1.getPrice());
+        assertEquals(expectedId, product.getId());
+        assertEquals(expectedTitle, product.getTitle());
+        assertEquals(expectedDescription, product.getDescription());
+        assertEquals(expectedPrice, product.getPrice());
+    }
+
+    @Test
+    public void testValidationConstraints() {
+        Product product = new Product();
+
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+        assertFalse(violations.isEmpty());
+        
+        // Check specific violations
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("id")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("title")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("description")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("price")));
     }
 }

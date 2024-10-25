@@ -25,3 +25,7 @@ Segurança        para incentivar usuários a atualizarem em caso de vulnerabili
  - Atualização do pom.xml para garantir dependências atualizadas e resolver problemas com o PIT (Mutation Testing).
  - Refatoração nas classes para utilizar WebClient.
  - Testes unitários para adaptar à nova implementação do WebClient.
+
+ ## 24/10/2024
+ - Variavel baseUrl parametrizavel .env
+ - logs Dockerfile

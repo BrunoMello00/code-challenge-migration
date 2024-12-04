@@ -1,6 +1,5 @@
 package com.example.dummyjson.dto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

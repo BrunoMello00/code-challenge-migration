@@ -1,9 +1,9 @@
 
-# DummyJSON Client - Java 8 e Spring Boot 2.x.x
+# DummyJSON Client - Java 17 e Spring Boot 3.2.5
 
 ## Descrição do Projeto
 
-Este projeto é um microsserviço Java que interage com a API pública [DummyJSON](https://dummyjson.com/docs/products) para realizar operações de busca de produtos. O projeto foi desenvolvido usando Java 17 e Spring Boot 3.2.5..
+Este projeto é um microsserviço Java que interage com a API pública [DummyJSON](https://dummyjson.com/docs/products) para realizar operações de busca de produtos. O projeto foi desenvolvido usando Java 17 e Spring Boot 3.2.5.
 
 ## Funcionalidades
 
@@ -46,7 +46,12 @@ dummyjson-client
 │       │       └── service
 │       │           └── ProductServiceTest.java
 │       └── resources
+└── .gitignore
+└── docker-compose.yaml
+└── Dockerfile
+└── Dockerfile.dev
 └── pom.xml
+└── README.md
 ```
 
 ## Passos para Executar o Projeto
@@ -61,26 +66,37 @@ dummyjson-client
 1. Clone o repositório:
 
     ```bash
-    git clone https://github.ibm.com/Wendell-Santos/code-challenge-migration.git
+    git clone https://github.com/eliascmurat/code-challenge-migration/tree/feature-atualiza-versao
     cd dummyjson-client
     ```
 
-2. Compile e execute o projeto:
+2. Compile e execute o projeto localmente:
 
     ```bash
     mvn clean install
     mvn spring-boot:run
     ```
 
-3. Acesse o serviço:
+### Compile e execute o projeto com Docker
 
-    O serviço estará disponível em `http://localhost:8080`.
-    É possível verificar a saúde do projeto em `http://localhost:8080/actuator/health`.
+1. Construir a imagem Docker e executar a aplicação:
+
+    ```bash  
+    docker-compose up --build
+    ```
 
 ### Executar Testes
 
-Para executar os testes unitários:
+1. Para executar os testes unitários:
 
-```bash
-mvn clean test
-```
+    ```bash
+    mvn clean test
+    ```
+
+### Verificar a saúde do serviço
+
+1. O endpoint de saúde pode ser acessado em::
+
+    ```
+    http://localhost:8080/actuator/health
+    ```

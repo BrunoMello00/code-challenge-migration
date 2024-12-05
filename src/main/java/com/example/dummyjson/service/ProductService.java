@@ -10,17 +10,16 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private static final String BASE_URL = "https://dummyjson.com/products";
-
     private final WebClient webClient;
 
     @Autowired
-    public ProductService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl(BASE_URL).build();
+    public ProductService(WebClient webClient) {
+        this.webClient = webClient;
     }
 
     public List<Product> getAllProducts() {
         return webClient.get()
+                .uri("/products")
                 .retrieve()
                 .bodyToFlux(Product.class)
                 .collectList()
@@ -29,7 +28,7 @@ public class ProductService {
 
     public Product getProductById(Long id) {
         return webClient.get()
-                .uri("/{id}", id)
+                .uri("/products/{id}", id)
                 .retrieve()
                 .bodyToMono(Product.class)
                 .block();

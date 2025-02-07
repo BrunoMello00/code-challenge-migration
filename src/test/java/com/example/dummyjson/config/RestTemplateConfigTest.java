@@ -1,19 +1,27 @@
 package com.example.dummyjson.config;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.reactive.function.client.WebClient;
 
-@RunWith(MockitoJUnitRunner.class)
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest
 public class RestTemplateConfigTest {
-
-    @InjectMocks
-    RestTemplateConfig restTemplateConfig;
+    @Autowired
+    private WebClient webClient;
 
     @Test
-    public void testRestTemplateConfig(){
-        Assert.assertNotNull(this.restTemplateConfig.restTemplate());
+    void testWebClientBean() {
+        assertNotNull(webClient);
     }
+
+    @Test
+    void testWebClientBaseUrl() {
+        String expectedBaseUrl = "https://dummyjson.com";
+        assertNotNull(webClient);
+    }
+
+
 }

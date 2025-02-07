@@ -1,56 +1,78 @@
 package com.example.dummyjson.service;
 
 import com.example.dummyjson.dto.Product;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.client.RestTemplate;
+import com.example.dummyjson.dto.ProductsResponse;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
+@TestPropertySource(properties = {
+        "dummyjson.base-url=http://localhost:9091"
+})
 public class ProductServiceTest {
 
-    @InjectMocks
+    private MockWebServer mockWebServer;
+
+    @Autowired
     private ProductService productService;
 
-    @Mock
-    private RestTemplate restTemplate;
+    @BeforeEach
+    void setUp() throws IOException {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start(9091);
+    }
 
-    @Test
-    public void testGetAllProducts() {
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setTitle("Product 1");
-
-        Product product2 = new Product();
-        product2.setId(2L);
-        product2.setTitle("Product 2");
-
-        Product[] products = {product1, product2};
-        when(restTemplate.getForObject("https://dummyjson.com/products", Product[].class)).thenReturn(products);
-
-        List<Product> result = productService.getAllProducts();
-        assertEquals(2, result.size());
-        assertEquals("Product 1", result.get(0).getTitle());
+    @AfterEach
+    void tearDown() throws IOException {
+        mockWebServer.shutdown();
     }
 
     @Test
-    public void testGetProductById() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setTitle("Product 1");
+    void testGetAllProducts() {
+        String mockResponse = """
+            {
+                "products": [
+                    {"id": 1, "title": "Produto 1"},
+                    {"id": 2, "title": "Produto 2"}
+                ],
+                "total": 2,
+                "skip": 0,
+                "limit": 30
+            }
+            """;
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(mockResponse)
+                .addHeader("Content-Type", "application/json"));
 
-        when(restTemplate.getForObject("https://dummyjson.com/products/1", Product.class)).thenReturn(product);
+        ProductsResponse response = productService.getAllProducts();
 
-        Product result = productService.getProductById(1L);
-        assertEquals("Product 1", result.getTitle());
+        assertNotNull(response);
+        assertEquals(2, response.getProducts().size());
+    }
+
+    @Test
+    void testGetProductById() {
+        String mockResponse = """
+            {"id": 1, "title": "Produto 1"}
+            """;
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(mockResponse)
+                .addHeader("Content-Type", "application/json"));
+
+        Product product = productService.getProductById(1L).block();
+
+        assertNotNull(product);
+        assertEquals("Produto 1", product.getTitle());
     }
 }

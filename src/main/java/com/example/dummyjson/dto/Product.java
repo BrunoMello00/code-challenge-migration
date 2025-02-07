@@ -1,9 +1,8 @@
 package com.example.dummyjson.dto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 public class Product {
 
@@ -21,7 +20,16 @@ public class Product {
     @NotNull
     private Double price;
 
-    // Getters and Setters
+    @NotNull
+    private String category;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public Long getId() {
         return id;

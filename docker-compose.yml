@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  dummyjson-client:
+    image: dummyjson-client
+    build: .
+    ports:
+      - "8080:8080"

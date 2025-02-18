@@ -86,6 +86,20 @@ Para executar os testes unitários:
 mvn clean test
 ```
 
+
+### Criacao de imagem Docker do app
+
+- Comando para baixar a imagem:
+```bash
+docker pull bruno00/challenge:1.0
+```
+
+- Comando para executar a imagem:
+```bash
+docker run -p 8080:8080 bruno00/challenge:1.0
+```
+
+
 ## Requisitos de Entrega
 
 1. Atualizar o `pom.xml` para usar Java 17+ e Spring Boot 3.2.5.
@@ -106,3 +120,4 @@ mvn clean test
 
 - Entregar o projeto em container será um diferencial.
 - Fica a critério do desenvolvedor inserir ou remover dependencias do projeto para garantir o objetivo do challenge.
+

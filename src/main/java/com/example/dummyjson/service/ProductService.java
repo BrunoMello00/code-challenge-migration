@@ -12,6 +12,9 @@ import com.example.dummyjson.dto.Product;
 @Service
 public class ProductService {
 
+    // Migração do uso de RestTemplate para WebClient
+    // URL base agora é configurável externamente, deixando mais fácil de configurar para diferentes ambientes.
+
     @Value("${dummyjson.api.url}")
     private String baseUrl;
 

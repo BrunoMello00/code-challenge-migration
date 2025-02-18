@@ -1,11 +1,13 @@
 package com.example.dummyjson.dto;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public class Product {
+
+    // Substituição do pacote de validação javax pelo jakarta
+    
 
     @NotNull
     @Min(0L)

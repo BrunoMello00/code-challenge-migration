@@ -17,6 +17,10 @@ import jakarta.validation.constraints.NotNull;
 @RequestMapping("/api/products")
 public class ProductController {
 
+    
+    // Substituição do pacote de validação javax.validation pelo jakarta.validation
+    
+    
     @Autowired
     private ProductService productService;
 
@@ -30,8 +34,5 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
-    @GetMapping("/health")
-    public String healthCheck() {
-        return "Service is up and running!";
-    }
+    
 }

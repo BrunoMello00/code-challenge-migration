@@ -1,27 +1,26 @@
 package com.example.dummyjson.controller;
 
-import com.example.dummyjson.dto.Product;
-import com.example.dummyjson.service.ProductService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-@RunWith(MockitoJUnitRunner.class)
+import com.example.dummyjson.dto.Product;
+import com.example.dummyjson.service.ProductService;
+
+@SpringBootTest
 public class ProductControllerTest {
 
-    @InjectMocks
+    @Autowired
     private ProductController productController;
 
-    @Mock
+    @MockBean
     private ProductService productService;
 
     @Test

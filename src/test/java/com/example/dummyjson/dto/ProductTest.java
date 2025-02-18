@@ -1,31 +1,29 @@
 package com.example.dummyjson.dto;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.validation.constraints.NotNull;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class ProductTest {
 
     @Test
-    public void testGetAndSetter(){
+    public void testGetAndSetter() {
         Long expectId = 1L;
         String expectedTitle = "A dummy title";
         String expectedDescription = "A dummy description";
-        Double expectedPrice = new Double("2.1");
+        Double expectedPrice = 2.1;
 
         Product product1 = new Product();
-        product1.setId(1L);
-        product1.setTitle("A dummy title");
-        product1.setDescription("A dummy description");
-        product1.setPrice(new Double("2.1"));
+        product1.setId(expectId);
+        product1.setTitle(expectedTitle);
+        product1.setDescription(expectedDescription);
+        product1.setPrice(expectedPrice);
 
-        Assert.assertEquals(expectId, product1.getId());
-        Assert.assertEquals(expectedTitle, product1.getTitle());
-        Assert.assertEquals(expectedDescription, product1.getDescription());
-        Assert.assertEquals(expectedPrice, product1.getPrice());
+        assertEquals(expectId, product1.getId());
+        assertEquals(expectedTitle, product1.getTitle());
+        assertEquals(expectedDescription, product1.getDescription());
+        assertEquals(expectedPrice, product1.getPrice());
     }
 }
